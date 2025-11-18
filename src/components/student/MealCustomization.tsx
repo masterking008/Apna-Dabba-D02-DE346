@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { menuService, favoriteService, MenuItem, ExtraItem } from '../../services';
+import { menuService, favoriteService } from '../../services';
+import type { MenuItem, ExtraItem } from '../../services';
+import Swal from 'sweetalert2';
 
 interface MealCustomizationProps {
   mealName: string;
@@ -33,10 +35,10 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
   }, [mealName]);
 
   const nutrition = {
-    calories: selectedItems.length * 150 + extras.length * 50,
-    protein: selectedItems.length * 8 + extras.length * 3,
-    carbs: selectedItems.length * 25 + extras.length * 6,
-    fat: selectedItems.length * 5 + extras.length * 2
+    calories: selectedItems.length * 150 + selectedExtras.length * 50,
+    protein: selectedItems.length * 8 + selectedExtras.length * 3,
+    carbs: selectedItems.length * 25 + selectedExtras.length * 6,
+    fat: selectedItems.length * 5 + selectedExtras.length * 2
   };
 
   const toggleItem = (itemId: number) => {
@@ -62,7 +64,7 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
   const addToFavorites = async (itemId: number) => {
     try {
       await favoriteService.addFavorite(itemId);
-      alert('Added to favorites!');
+      Swal.fire('Success!', 'Added to favorites!', 'success');
     } catch (error) {
       console.error('Failed to add to favorites:', error);
     }
@@ -73,18 +75,16 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="bg-white rounded-xl shadow-md p-6 mb-4">
+    <div className="min-h-screen bg-neutral-50 p-4">
+      <div className="card mb-4">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => navigate('/dashboard')} className="text-indigo-500">← Back</button>
-          <h1 className="text-xl font-bold">Customize {mealName}</h1>
-          <button onClick={() => setIsFavorite(!isFavorite)} className="text-2xl">
-            {isFavorite ? '❤️' : '🤍'}
-          </button>
+          <button onClick={() => navigate('/dashboard')} className="text-primary-500">← Back</button>
+          <h1 className="text-xl text-heading">Customize {mealName}</h1>
+          <div className="w-6"></div>
         </div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Main Items</h3>
+          <h3 className="text-lg font-semibold text-heading mb-3">Main Items</h3>
           {menuItems.map((item) => {
             const isSelected = selectedItems.some(s => s.id === item.id);
             return (
@@ -96,7 +96,7 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
                 <button
                   onClick={() => toggleItem(item.id)}
                   className={`w-6 h-6 rounded border-2 ${
-                    isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-gray-300'
+                    isSelected ? 'bg-primary-500 border-primary-500' : 'border-neutral-300'
                   }`}
                 >
                   {isSelected && <span className="text-white text-xs">✓</span>}
@@ -107,7 +107,7 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
         </div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">Extras</h3>
+          <h3 className="text-lg font-semibold text-heading mb-3">Extras</h3>
           {extraItems.map((item) => {
             const isSelected = selectedExtras.some(e => e.id === item.id);
             return (
@@ -116,7 +116,7 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
                 <button
                   onClick={() => toggleExtra(item.id)}
                   className={`w-6 h-6 rounded border-2 ${
-                    isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                    isSelected ? 'bg-primary-500 border-primary-500' : 'border-neutral-300'
                   }`}
                 >
                   {isSelected && <span className="text-white text-xs">✓</span>}
@@ -126,8 +126,8 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
           })}
         </div>
 
-        <div className="bg-blue-50 rounded-lg p-4 mb-6">
-          <h3 className="text-lg font-semibold mb-3">Nutrition Info</h3>
+        <div className="bg-primary-50 rounded-card p-4 mb-6">
+          <h3 className="text-lg font-semibold text-heading mb-3">Nutrition Info</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>Calories: {nutrition.calories}</div>
             <div>Protein: {nutrition.protein}g</div>
@@ -138,7 +138,7 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
 
         <button
           onClick={() => navigate('/address-delivery')}
-          className="w-full bg-indigo-500 text-white py-3 rounded-lg font-semibold hover:bg-indigo-600 transition-colors"
+          className="btn-primary w-full"
         >
           Continue to Address
         </button>

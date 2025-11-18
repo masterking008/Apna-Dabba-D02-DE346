@@ -26,9 +26,13 @@ const ChatbotScreen: React.FC<ChatbotScreenProps> = ({ onClose }) => {
     setTimeout(() => {
       let botResponse = '';
       if (text.toLowerCase().includes('availability')) {
-        botResponse = 'Today\'s lunch is available at:\n• Hostel 1 Mess - Dal Rice, Roti\n• Hostel 2 Mess - Biryani, Raita\nETA: 25-30 minutes';
+        botResponse = 'Let me check today\'s meal availability for you. Please check the main dashboard for current meal options and timings.';
       } else if (text.toLowerCase().includes('nutrition')) {
-        botResponse = 'Dal Rice nutritional info:\n• Calories: 320\n• Protein: 12g\n• Carbs: 58g\n• Fat: 6g';
+        botResponse = 'Nutritional information is available for each meal item. You can view detailed nutrition facts when customizing your order.';
+      } else if (text.toLowerCase().includes('track')) {
+        botResponse = 'You can track your order from the Order History section. I\'ll show you real-time updates on your order status.';
+      } else if (text.toLowerCase().includes('wallet')) {
+        botResponse = 'You can check your wallet balance and add money from the Wallet section in the app.';
       } else {
         botResponse = 'I understand you\'re asking about "' + text + '". Let me help you with that!';
       }

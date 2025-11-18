@@ -1,1 +1,30 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Base styles */
+body {
+  font-family: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+  background-color: #F7F8FA;
+  color: #1f2937;
+}
+
+/* Design system utilities */
+.text-heading {
+  @apply text-neutral-900 font-bold;
+}
+
+.text-subtext {
+  @apply text-neutral-600;
+}
+
+.card {
+  @apply bg-white rounded-card p-4 shadow-sm;
+}
+
+.btn-primary {
+  @apply bg-primary-500 text-white min-h-button px-6 rounded-lg font-medium hover:bg-primary-600 transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-neutral-100 text-neutral-800 min-h-button px-6 rounded-lg font-medium hover:bg-neutral-200 transition-colors;
+}

@@ -13,9 +13,14 @@ class OrderService {
     return apiClient.post('/orders/', data, token);
   }
 
-  async updateOrderStatus(orderId: string, status: string): Promise<Order> {
+  async updateOrderStatus(orderId: number | string, status: string): Promise<Order> {
     const token = authService.getToken();
     return apiClient.patch(`/orders/${orderId}/status/`, { status }, token);
+  }
+
+  async getMessOrders(): Promise<Order[]> {
+    const token = authService.getToken();
+    return apiClient.get('/orders/mess/', token);
   }
 }
 

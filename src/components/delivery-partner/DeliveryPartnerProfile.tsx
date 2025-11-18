@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Bike, Zap, Star, Trophy } from 'lucide-react';
 
 const DeliveryPartnerProfile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -14,9 +15,9 @@ const DeliveryPartnerProfile: React.FC = () => {
   });
 
   const badges = [
-    { name: 'Speed Demon', icon: '⚡', earned: true },
-    { name: 'Customer Favorite', icon: '⭐', earned: true },
-    { name: 'Perfect Week', icon: '🏆', earned: false }
+    { name: 'Speed Demon', icon: <Zap size={24} />, earned: true },
+    { name: 'Customer Favorite', icon: <Star size={24} />, earned: true },
+    { name: 'Perfect Week', icon: <Trophy size={24} />, earned: false }
   ];
 
   const leaderboard = {
@@ -43,7 +44,7 @@ const DeliveryPartnerProfile: React.FC = () => {
         <div className="bg-white rounded-xl shadow-md p-6">
           <div className="text-center mb-6">
             <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-3xl">🏍️</span>
+              <Bike size={32} className="text-indigo-600" />
             </div>
             <h2 className="text-xl font-semibold text-gray-800">{profile.name}</h2>
             <p className="text-gray-600">Delivery Partner</p>
@@ -177,7 +178,7 @@ const DeliveryPartnerProfile: React.FC = () => {
               <div key={idx} className={`text-center p-3 rounded-lg ${
                 badge.earned ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200'
               }`}>
-                <div className={`text-2xl mb-1 ${badge.earned ? '' : 'grayscale'}`}>{badge.icon}</div>
+                <div className={`mb-1 ${badge.earned ? 'text-yellow-500' : 'text-gray-400'}`}>{badge.icon}</div>
                 <div className={`text-xs font-medium ${
                   badge.earned ? 'text-yellow-800' : 'text-gray-500'
                 }`}>

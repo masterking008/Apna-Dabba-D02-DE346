@@ -1,18 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { profileService, authService } from '../../services';
+import type { UserProfile } from '../../services';
 
 const MessWorkerProfile: React.FC = () => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [profile, setProfile] = useState({
-    name: 'Rajesh Kumar',
-    email: 'rajesh.kumar@mess.com',
-    phone: '+91 9876543210',
-    hostelMess: 'Hostel 1 Mess'
-  });
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = () => {
-    setIsEditing(false);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await profileService.getProfile();
+        setProfile(data);
+      } catch (error) {
+        console.error('Failed to fetch profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const handleSave = async () => {
+    if (!profile) return;
+    try {
+      await profileService.updateProfile(profile);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
   };
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate('/login');
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
+
+  if (!profile) {
+    return <div className="text-center py-8 text-gray-500">Profile not found</div>;
+  }
 
   return (
     <div className="bg-gray-50">
@@ -34,7 +67,7 @@ const MessWorkerProfile: React.FC = () => {
             <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <span className="text-3xl">👨‍🍳</span>
             </div>
-            <h2 className="text-xl font-semibold text-gray-800">{profile.name}</h2>
+            <h2 className="text-xl font-semibold text-gray-800">{profile.username}</h2>
             <p className="text-gray-600">Mess Worker</p>
           </div>
 
@@ -43,8 +76,8 @@ const MessWorkerProfile: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <input
                 type="text"
-                value={profile.name}
-                onChange={(e) => setProfile({...profile, name: e.target.value})}
+                value={profile.username}
+                onChange={(e) => setProfile({...profile, username: e.target.value})}
                 disabled={!isEditing}
                 className={`w-full p-3 border border-gray-300 rounded-lg ${
                   isEditing ? 'bg-white' : 'bg-gray-50'
@@ -69,8 +102,8 @@ const MessWorkerProfile: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
               <input
                 type="tel"
-                value={profile.phone}
-                onChange={(e) => setProfile({...profile, phone: e.target.value})}
+                value={profile.phone_number || ''}
+                onChange={(e) => setProfile({...profile, phone_number: e.target.value})}
                 disabled={!isEditing}
                 className={`w-full p-3 border border-gray-300 rounded-lg ${
                   isEditing ? 'bg-white' : 'bg-gray-50'
@@ -79,25 +112,13 @@ const MessWorkerProfile: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Hostel Mess</label>
-              {isEditing ? (
-                <select
-                  value={profile.hostelMess}
-                  onChange={(e) => setProfile({...profile, hostelMess: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                >
-                  <option value="Hostel 1 Mess">Hostel 1 Mess</option>
-                  <option value="Hostel 2 Mess">Hostel 2 Mess</option>
-                  <option value="Hostel 3 Mess">Hostel 3 Mess</option>
-                </select>
-              ) : (
-                <input
-                  type="text"
-                  value={profile.hostelMess}
-                  disabled
-                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
-                />
-              )}
+              <label className="block text-sm font-medium text-gray-700 mb-1">Hostel</label>
+              <input
+                type="text"
+                value={profile.hostel || 'Not assigned'}
+                disabled
+                className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
+              />
             </div>
 
             {isEditing && (
@@ -111,13 +132,22 @@ const MessWorkerProfile: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md p-6 mb-4">
           <h3 className="text-lg font-semibold mb-4">Security</h3>
           <button
             onClick={() => setShowPasswordModal(true)}
             className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
           >
             Change Password
+          </button>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-500 text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors"
+          >
+            Logout
           </button>
         </div>
       </div>

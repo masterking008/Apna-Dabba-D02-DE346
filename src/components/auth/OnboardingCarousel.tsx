@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Truck, Salad, DollarSign } from 'lucide-react';
 
 const OnboardingCarousel: React.FC = () => {
   const navigate = useNavigate();
@@ -9,17 +10,17 @@ const OnboardingCarousel: React.FC = () => {
     {
       title: "Fast Delivery",
       description: "Get your mess meals delivered hot and fresh to your doorstep within 30 minutes",
-      icon: "🚚"
+      icon: <Truck size={64} className="text-white" />
     },
     {
       title: "Nutritional Info",
       description: "Track calories, proteins, and nutrients in every meal to maintain a healthy lifestyle",
-      icon: "🥗"
+      icon: <Salad size={64} className="text-white" />
     },
     {
       title: "SMA Savings",
       description: "Save money with our Student Meal Allowance program and prepaid meal plans",
-      icon: "💰"
+      icon: <DollarSign size={64} className="text-white" />
     }
   ];
 
@@ -46,7 +47,7 @@ const OnboardingCarousel: React.FC = () => {
         </button>
 
         <div className="mb-12">
-          <div className="text-6xl mb-6">{slides[currentSlide].icon}</div>
+          <div className="flex justify-center mb-6">{slides[currentSlide].icon}</div>
           <h2 className="text-3xl font-bold text-white mb-4">{slides[currentSlide].title}</h2>
           <p className="text-lg text-white/90 leading-relaxed">{slides[currentSlide].description}</p>
         </div>

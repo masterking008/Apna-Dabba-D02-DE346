@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services';
+import Swal from 'sweetalert2';
 
 type UserType = 'Student' | 'Mess Worker' | 'Delivery Partner';
 
@@ -30,12 +31,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
       await authService.login({
         username,
         password,
-        user_type: userType
+        user_type: userType === 'Student' ? 'student' : userType === 'Mess Worker' ? 'mess_worker' : 'delivery_partner'
       });
       onLogin?.(userType);
       navigate('/dashboard');
-    } catch (error) {
-      alert('Login failed. Please check your credentials.');
+    } catch (error: any) {
+      console.error('Login error:', error);
+      const errorMessage = error?.message || 'Please check your credentials.';
+      Swal.fire('Login Failed', errorMessage, 'error');
     } finally {
       setLoading(false);
     }

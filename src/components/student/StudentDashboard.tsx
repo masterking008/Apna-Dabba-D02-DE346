@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { menuService, MealType } from '../../services';
+import { menuService } from '../../services';
+import type { MealType } from '../../services';
 
 interface StudentDashboardProps {
   onMealSelect?: (meal: string) => void;
@@ -13,9 +14,10 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onMealSelect }) => 
     const fetchMealTypes = async () => {
       try {
         const data = await menuService.getMealTypes();
-        setMealTypes(data);
+        setMealTypes(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch meal types:', error);
+        setMealTypes([]);
       } finally {
         setLoading(false);
       }
@@ -24,17 +26,22 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onMealSelect }) => 
   }, []);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>;
+    return <div className="flex justify-center items-center h-64 bg-neutral-50"><span className="text-subtext">Loading...</span></div>;
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-neutral-50 min-h-screen">
       <div className="bg-white shadow-sm p-4">
-        <h1 className="text-2xl font-bold text-gray-800">Today's Meals</h1>
+        <h1 className="text-2xl text-heading">Today's Meals</h1>
       </div>
 
       <div className="p-4 grid grid-cols-2 gap-4">
-          {mealTypes.map((meal) => {
+        {mealTypes.length === 0 ? (
+          <div className="col-span-2 text-center py-8 text-subtext">
+            No meals available at the moment
+          </div>
+        ) : (
+          mealTypes.map((meal) => {
             const currentTime = new Date();
             const startTime = new Date(`1970-01-01T${meal.start_time}`);
             const endTime = new Date(`1970-01-01T${meal.end_time}`);
@@ -42,10 +49,10 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onMealSelect }) => 
             const isAvailable = currentTimeOnly >= startTime && currentTimeOnly <= endTime;
             
             return (
-              <div key={meal.id} className="bg-white rounded-xl shadow-md p-4">
+              <div key={meal.id} className="card">
                 <div className="text-4xl mb-2">{meal.icon}</div>
-                <h3 className="text-lg font-semibold mb-2">{meal.name}</h3>
-                <div className="text-sm text-gray-600 mb-3">
+                <h3 className="text-lg font-semibold text-heading mb-2">{meal.name}</h3>
+                <div className="text-sm text-subtext mb-3">
                   <div>⏰ {meal.start_time} - {meal.end_time}</div>
                 </div>
                 <div className={`text-xs mb-3 ${isAvailable ? 'text-green-600' : 'text-red-600'}`}>
@@ -54,17 +61,14 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onMealSelect }) => 
                 <button
                   onClick={() => onMealSelect?.(meal.name)}
                   disabled={!isAvailable}
-                  className={`w-full py-2 rounded-lg font-medium ${
-                    isAvailable 
-                      ? 'bg-indigo-500 text-white hover:bg-indigo-600' 
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
+                  className={isAvailable ? 'btn-primary w-full' : 'btn-secondary w-full opacity-50 cursor-not-allowed'}
                 >
                   Book
                 </button>
               </div>
             );
-          })}
+          })
+        )}
       </div>
     </div>
   );

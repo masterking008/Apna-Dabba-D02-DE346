@@ -1,41 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { menuService } from '../../services';
+import type { MenuItem, ExtraItem, MealType } from '../../services';
 
 const MessWorkerMenuManagement: React.FC = () => {
-  const [selectedMeal, setSelectedMeal] = useState('Breakfast');
+  const [selectedMeal, setSelectedMeal] = useState('breakfast');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
+  const [mealTypes, setMealTypes] = useState<MealType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const menuItems = {
-    Breakfast: [
-      { name: 'Poha', available: true, orders: 45 },
-      { name: 'Upma', available: true, orders: 32 },
-      { name: 'Bread Butter', available: false, orders: 0 }
-    ],
-    Lunch: [
-      { name: 'Dal Rice', available: true, orders: 78 },
-      { name: 'Roti', available: true, orders: 65 },
-      { name: 'Sabzi', available: true, orders: 58 }
-    ],
-    Snacks: [
-      { name: 'Samosa', available: true, orders: 25 },
-      { name: 'Tea', available: true, orders: 89 }
-    ],
-    Dinner: [
-      { name: 'Chapati', available: true, orders: 72 },
-      { name: 'Dal', available: true, orders: 68 }
-    ]
-  };
-
-  const extras = [
-    { name: 'Lassi', price: 15, available: true, orders: 23 },
-    { name: 'Chhass', price: 10, available: true, orders: 18 },
-    { name: 'Curd', price: 12, available: false, orders: 0 }
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [meals, items, extras] = await Promise.all([
+          menuService.getMealTypes(),
+          menuService.getMenuItems(selectedMeal),
+          menuService.getExtraItems()
+        ]);
+        setMealTypes(Array.isArray(meals) ? meals : []);
+        setMenuItems(Array.isArray(items) ? items : []);
+        setExtraItems(Array.isArray(extras) ? extras : []);
+      } catch (error) {
+        console.error('Failed to fetch menu data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [selectedMeal]);
 
   const analytics = {
-    totalOrders: 156,
-    popularItem: 'Tea',
+    totalOrders: menuItems.length,
+    popularItem: menuItems.find(item => item.is_available)?.name || 'N/A',
     estimatedWastage: '12%'
   };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="bg-gray-50">
@@ -43,15 +46,15 @@ const MessWorkerMenuManagement: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Menu Management</h1>
         
         <div className="flex gap-2 mb-4 overflow-x-auto">
-          {Object.keys(menuItems).map((meal) => (
+          {mealTypes.map((meal) => (
             <button
-              key={meal}
-              onClick={() => setSelectedMeal(meal)}
+              key={meal.id}
+              onClick={() => setSelectedMeal(meal.name.toLowerCase())}
               className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${
-                selectedMeal === meal ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600'
+                selectedMeal === meal.name.toLowerCase() ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600'
               }`}
             >
-              {meal}
+              {meal.name}
             </button>
           ))}
         </div>
@@ -85,50 +88,60 @@ const MessWorkerMenuManagement: React.FC = () => {
           </div>
           
           <div className="space-y-3">
-            {menuItems[selectedMeal as keyof typeof menuItems].map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <div className="font-medium">{item.name}</div>
-                  <div className="text-sm text-gray-600">{item.orders} orders today</div>
+            {menuItems.length === 0 ? (
+              <div className="text-center py-4 text-gray-500">No items available</div>
+            ) : (
+              menuItems.map((item) => (
+                <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-medium">{item.name}</div>
+                    <div className="text-sm text-gray-600">Menu item</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center">
+                      <input 
+                        type="checkbox" 
+                        checked={item.is_available} 
+                        className="mr-2"
+                        readOnly
+                      />
+                      <span className="text-sm">Available</span>
+                    </label>
+                    <button className="text-red-500 text-sm">Delete</button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <label className="flex items-center">
-                    <input 
-                      type="checkbox" 
-                      checked={item.available} 
-                      className="mr-2"
-                    />
-                    <span className="text-sm">Available</span>
-                  </label>
-                  <button className="text-red-500 text-sm">Delete</button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
         <div className="bg-white rounded-xl shadow-md p-4">
           <h3 className="text-lg font-semibold mb-4">Extras</h3>
           <div className="space-y-3">
-            {extras.map((item, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <div className="font-medium">{item.name} (₹{item.price})</div>
-                  <div className="text-sm text-gray-600">{item.orders} orders today</div>
+            {extraItems.length === 0 ? (
+              <div className="text-center py-4 text-gray-500">No extra items available</div>
+            ) : (
+              extraItems.map((item) => (
+                <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-medium">{item.name} (₹{item.price})</div>
+                    <div className="text-sm text-gray-600">Extra item</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center">
+                      <input 
+                        type="checkbox" 
+                        checked={item.is_available} 
+                        className="mr-2"
+                        readOnly
+                      />
+                      <span className="text-sm">Available</span>
+                    </label>
+                    <button className="text-blue-500 text-sm">Edit</button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <label className="flex items-center">
-                    <input 
-                      type="checkbox" 
-                      checked={item.available} 
-                      className="mr-2"
-                    />
-                    <span className="text-sm">Available</span>
-                  </label>
-                  <button className="text-blue-500 text-sm">Edit</button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

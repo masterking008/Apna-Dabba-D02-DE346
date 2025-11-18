@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Home, ClipboardList, CreditCard, User } from 'lucide-react';
 import BottomTabLayout from '../shared/BottomTabLayout';
 import StudentDashboard from './StudentDashboard';
 import StudentHistoryTab from './StudentHistoryTab';
@@ -21,10 +22,10 @@ const BottomTabNavigator: React.FC<BottomTabNavigatorProps> = ({ onMealSelect, o
   const [showTracking, setShowTracking] = useState(false);
 
   const tabs = [
-    { id: 'home', label: 'Home', icon: '🏠' },
-    { id: 'orders', label: 'Orders', icon: '📋' },
-    { id: 'wallet', label: 'Wallet', icon: '💳' },
-    { id: 'profile', label: 'Profile', icon: '👤' }
+    { id: 'home', label: 'Home', icon: <Home size={20} /> },
+    { id: 'orders', label: 'Orders', icon: <ClipboardList size={20} /> },
+    { id: 'wallet', label: 'Wallet', icon: <CreditCard size={20} /> },
+    { id: 'profile', label: 'Profile', icon: <User size={20} /> }
   ];
 
   return (

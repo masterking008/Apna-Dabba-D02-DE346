@@ -1,12 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Bell, CheckCircle } from 'lucide-react';
+import { orderService } from '../../services';
+import type { Order } from '../../services';
 
 const MessWorkerDashboard: React.FC = () => {
   const [sortBy, setSortBy] = useState('time');
-  const [orders] = useState([
-    { id: 'ORD001', student: 'Rahul Kumar', meal: 'Lunch', hostel: 'Hostel 1', time: '12:30 PM', status: 'pending' },
-    { id: 'ORD002', student: 'Priya Singh', meal: 'Breakfast', hostel: 'Hostel 2', time: '8:00 AM', status: 'accepted' },
-    { id: 'ORD003', student: 'Amit Sharma', meal: 'Dinner', hostel: 'Hostel 1', time: '7:00 PM', status: 'ready' }
-  ]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const data = await orderService.getMessOrders();
+        setOrders(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
+
+  const handleOrderAction = async (orderId: number, action: 'accept' | 'decline' | 'ready') => {
+    try {
+      await orderService.updateOrderStatus(orderId, action);
+      const updatedOrders = await orderService.getMessOrders();
+      setOrders(Array.isArray(updatedOrders) ? updatedOrders : []);
+    } catch (error) {
+      console.error('Failed to update order:', error);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -17,14 +41,20 @@ const MessWorkerDashboard: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
+
   return (
     <div className="bg-gray-50">
       <div className="bg-white shadow-sm p-4">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-gray-800">Mess Dashboard</h1>
           <div className="relative">
-            <span className="text-2xl">🔔</span>
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+            <Bell size={24} className="text-gray-600" />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {orders.filter(o => o.status === 'pending').length}
+            </span>
           </div>
         </div>
         
@@ -42,43 +72,56 @@ const MessWorkerDashboard: React.FC = () => {
       </div>
 
       <div className="p-4 space-y-4">
-        {orders.map((order) => (
-          <div key={order.id} className="bg-white rounded-xl shadow-md p-4">
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <h3 className="font-semibold text-lg">{order.student}</h3>
-                <p className="text-gray-600 text-sm">{order.meal} • {order.hostel}</p>
-                <p className="text-gray-500 text-sm">{order.time}</p>
-              </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                {order.status.toUpperCase()}
-              </span>
-            </div>
-            
-            <div className="flex gap-2">
-              {order.status === 'pending' && (
-                <>
-                  <button className="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-medium">
-                    Accept
-                  </button>
-                  <button className="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-medium">
-                    Decline
-                  </button>
-                </>
-              )}
-              {order.status === 'accepted' && (
-                <button className="w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-medium">
-                  Mark Ready
-                </button>
-              )}
-              {order.status === 'ready' && (
-                <div className="w-full text-center py-2 text-green-600 font-medium">
-                  ✅ Ready for Pickup
+        {orders.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">No orders available</div>
+        ) : (
+          orders.map((order) => (
+            <div key={order.id} className="bg-white rounded-xl shadow-md p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div>
+                  <h3 className="font-semibold text-lg">{order.user?.username || 'Student'}</h3>
+                  <p className="text-gray-600 text-sm">{order.meal_type} • {order.hostel || 'Hostel'}</p>
+                  <p className="text-gray-500 text-sm">{new Date(order.created_at).toLocaleTimeString()}</p>
                 </div>
-              )}
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                  {order.status.toUpperCase()}
+                </span>
+              </div>
+              
+              <div className="flex gap-2">
+                {order.status === 'pending' && (
+                  <>
+                    <button 
+                      onClick={() => handleOrderAction(order.id, 'accept')}
+                      className="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm font-medium"
+                    >
+                      Accept
+                    </button>
+                    <button 
+                      onClick={() => handleOrderAction(order.id, 'decline')}
+                      className="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-medium"
+                    >
+                      Decline
+                    </button>
+                  </>
+                )}
+                {order.status === 'accepted' && (
+                  <button 
+                    onClick={() => handleOrderAction(order.id, 'ready')}
+                    className="w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-medium"
+                  >
+                    Mark Ready
+                  </button>
+                )}
+                {order.status === 'ready' && (
+                  <div className="w-full text-center py-2 text-green-600 font-medium flex items-center justify-center gap-2">
+                    <CheckCircle size={16} /> Ready for Pickup
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

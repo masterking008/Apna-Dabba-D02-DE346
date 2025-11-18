@@ -1,4 +1,5 @@
 import React from 'react';
+import { Package, DollarSign } from 'lucide-react';
 
 const TiffinDepositScreen: React.FC = () => {
   const depositData = {
@@ -62,11 +63,10 @@ const TiffinDepositScreen: React.FC = () => {
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     item.type === 'deposit' ? 'bg-indigo-100' : 'bg-green-100'
                   }`}>
-                    <span className={`text-sm ${
-                      item.type === 'deposit' ? 'text-indigo-600' : 'text-green-600'
-                    }`}>
-                      {item.type === 'deposit' ? '📦' : '💰'}
-                    </span>
+                    {item.type === 'deposit' ? 
+                      <Package size={16} className="text-indigo-600" /> : 
+                      <DollarSign size={16} className="text-green-600" />
+                    }
                   </div>
                   <div>
                     <div className="font-medium text-sm">{item.description}</div>

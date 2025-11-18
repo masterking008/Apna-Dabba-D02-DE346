@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { addressService, Address } from '../../services';
+import { addressService } from '../../services';
+import type { Address } from '../../services';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 interface AddressDeliveryProps {
   onConfirm?: () => void;
@@ -50,7 +52,7 @@ const AddressDelivery: React.FC<AddressDeliveryProps> = ({ onConfirm, onBack }) 
       setNewAddressText('');
     } catch (error) {
       console.error('Failed to add address:', error);
-      alert('Failed to add address. Please try again.');
+      Swal.fire('Error', 'Failed to add address. Please try again.', 'error');
     }
   };
 
@@ -128,10 +130,10 @@ const AddressDelivery: React.FC<AddressDeliveryProps> = ({ onConfirm, onBack }) 
         <div className="bg-gray-50 rounded-lg p-4 mb-6">
           <h3 className="font-semibold mb-2">Order Summary</h3>
           <div className="text-sm space-y-1">
-            <div>Hostel: Hostel 1</div>
+            <div>Address: {selectedAddressData?.name || 'No address selected'}</div>
             <div>ETA: 25-30 minutes</div>
             <div>Delivery Fee: ₹{deliveryType === 'hub' ? '5' : '10'}</div>
-            <div className="font-semibold">Total: ₹{deliveryType === 'hub' ? '85' : '90'}</div>
+            <div className="font-semibold">Delivery Total: ₹{deliveryType === 'hub' ? '5' : '10'}</div>
           </div>
         </div>
 

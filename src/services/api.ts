@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000/apnadabba';
+const API_BASE_URL = '/apnadabba';
 
 export const apiClient = {
   get: async (endpoint: string, token?: string) => {
@@ -9,6 +9,12 @@ export const apiClient = {
         ...(token && { 'Authorization': `Token ${token}` }),
       },
     });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+    }
+    
     return response.json();
   },
 
@@ -21,6 +27,12 @@ export const apiClient = {
       },
       body: JSON.stringify(data),
     });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+    }
+    
     return response.json();
   },
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { searchService, MenuItem, Order } from '../../services';
+import { searchService } from '../../services';
+import type { MenuItem, Order } from '../../services';
 
 const SearchScreen: React.FC = () => {
   const [query, setQuery] = useState('');

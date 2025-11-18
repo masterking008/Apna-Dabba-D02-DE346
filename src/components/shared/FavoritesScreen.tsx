@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { favoriteService, Favorite } from '../../services';
+import { Heart } from 'lucide-react';
+import { favoriteService } from '../../services';
+import type { Favorite } from '../../services';
 
 const FavoritesScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState('favorites');
@@ -96,7 +98,7 @@ const FavoritesScreen: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="text-4xl mb-4">❤️</div>
+                <div className="flex justify-center mb-4"><Heart size={48} className="text-red-500" /></div>
                 <p className="text-gray-600">No favorite meals yet</p>
                 <p className="text-sm text-gray-500">Add meals to favorites while ordering</p>
               </div>

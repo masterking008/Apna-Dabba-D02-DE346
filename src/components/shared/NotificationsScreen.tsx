@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { notificationService, Notification } from '../../services';
+import { Package, Heart, CreditCard, Truck, DollarSign, Bell } from 'lucide-react';
+import { notificationService } from '../../services';
+import type { Notification } from '../../services';
 
 const NotificationsScreen: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -45,13 +47,13 @@ const NotificationsScreen: React.FC = () => {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'order': return '📦';
-      case 'favorite': return '❤️';
-      case 'payment': return '💳';
-      case 'delivery': return '🚚';
-      case 'refund': return '💰';
-      case 'general': return '🔔';
-      default: return '🔔';
+      case 'order': return <Package size={24} className="text-blue-500" />;
+      case 'favorite': return <Heart size={24} className="text-red-500" />;
+      case 'payment': return <CreditCard size={24} className="text-green-500" />;
+      case 'delivery': return <Truck size={24} className="text-orange-500" />;
+      case 'refund': return <DollarSign size={24} className="text-purple-500" />;
+      case 'general': return <Bell size={24} className="text-gray-500" />;
+      default: return <Bell size={24} className="text-gray-500" />;
     }
   };
 
@@ -75,7 +77,7 @@ const NotificationsScreen: React.FC = () => {
             onClick={() => !notification.is_read && markAsRead(notification.id)}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl">{getIcon(notification.notification_type)}</div>
+              <div className="mt-1">{getIcon(notification.notification_type)}</div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-800">{notification.title}</h3>
                 <p className="text-gray-600 text-sm mt-1">{notification.message}</p>

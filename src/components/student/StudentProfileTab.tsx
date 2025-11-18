@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { GraduationCap, Bell, Lock, HelpCircle, FileText } from 'lucide-react';
+import { authService, profileService } from '../../services';
+import type { User } from '../../services';
 
 interface StudentProfileTabProps {
   onLogout?: () => void;
@@ -6,14 +9,22 @@ interface StudentProfileTabProps {
 
 const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    name: 'Rahul Kumar',
-    rollNumber: 'CS21B001',
-    email: 'rahul.kumar@student.ac.in',
-    phone: '+91 9876543210',
-    hostel: 'Hostel 1',
-    room: 'A-101'
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const userData = authService.getUser();
+    setUser(userData);
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
+
+  if (!user) {
+    return <div className="flex justify-center items-center h-64">User not found</div>;
+  }
 
   return (
     <div className="bg-gray-50">
@@ -35,8 +46,8 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
             <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
               <span className="text-3xl">👨‍🎓</span>
             </div>
-            <h2 className="text-xl font-semibold text-gray-800">{profile.name}</h2>
-            <p className="text-gray-600">Student • {profile.rollNumber}</p>
+            <h2 className="text-xl font-semibold text-gray-800">{user.first_name} {user.last_name}</h2>
+            <p className="text-gray-600">Student • {user.username}</p>
           </div>
 
           <div className="space-y-4">
@@ -44,12 +55,9 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <input
                 type="text"
-                value={profile.name}
-                onChange={(e) => setProfile({...profile, name: e.target.value})}
-                disabled={!isEditing}
-                className={`w-full p-3 border border-gray-300 rounded-lg ${
-                  isEditing ? 'bg-white' : 'bg-gray-50'
-                }`}
+                value={`${user.first_name} ${user.last_name}`}
+                disabled
+                className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
               />
             </div>
 
@@ -57,7 +65,7 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Roll Number</label>
               <input
                 type="text"
-                value={profile.rollNumber}
+                value={user.username}
                 disabled
                 className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
               />
@@ -67,12 +75,9 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <input
                 type="email"
-                value={profile.email}
-                onChange={(e) => setProfile({...profile, email: e.target.value})}
-                disabled={!isEditing}
-                className={`w-full p-3 border border-gray-300 rounded-lg ${
-                  isEditing ? 'bg-white' : 'bg-gray-50'
-                }`}
+                value={user.email}
+                disabled
+                className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
               />
             </div>
 
@@ -80,12 +85,9 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
               <input
                 type="tel"
-                value={profile.phone}
-                onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                disabled={!isEditing}
-                className={`w-full p-3 border border-gray-300 rounded-lg ${
-                  isEditing ? 'bg-white' : 'bg-gray-50'
-                }`}
+                value={user.phone}
+                disabled
+                className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
               />
             </div>
 
@@ -94,7 +96,7 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Hostel</label>
                 <input
                   type="text"
-                  value={profile.hostel}
+                  value="N/A"
                   disabled
                   className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
                 />
@@ -103,12 +105,9 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Room</label>
                 <input
                   type="text"
-                  value={profile.room}
-                  onChange={(e) => setProfile({...profile, room: e.target.value})}
-                  disabled={!isEditing}
-                  className={`w-full p-3 border border-gray-300 rounded-lg ${
-                    isEditing ? 'bg-white' : 'bg-gray-50'
-                  }`}
+                  value="N/A"
+                  disabled
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50"
                 />
               </div>
             </div>
@@ -125,17 +124,17 @@ const StudentProfileTab: React.FC<StudentProfileTabProps> = ({ onLogout }) => {
         </div>
 
         <div className="bg-white rounded-xl shadow-md p-6 space-y-3">
-          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg">
-            🔔 Notification Settings
+          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg flex items-center">
+            <Bell size={20} className="text-gray-600 mr-3" />Notification Settings
           </button>
-          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg">
-            🔒 Change Password
+          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg flex items-center">
+            <Lock size={20} className="text-gray-600 mr-3" />Change Password
           </button>
-          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg">
-            ❓ Help & Support
+          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg flex items-center">
+            <HelpCircle size={20} className="text-gray-600 mr-3" />Help & Support
           </button>
-          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg">
-            📋 Terms & Conditions
+          <button className="w-full text-left p-3 hover:bg-gray-50 rounded-lg flex items-center">
+            <FileText size={20} className="text-gray-600 mr-3" />Terms & Conditions
           </button>
         </div>
 

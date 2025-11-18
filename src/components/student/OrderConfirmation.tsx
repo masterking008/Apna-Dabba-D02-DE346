@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { orderService, Order } from '../../services';
+import { orderService } from '../../services';
+import type { Order } from '../../services';
 import { useNavigate } from 'react-router-dom';
 
 interface OrderConfirmationProps {
@@ -43,13 +44,18 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ onTrackOrder, onR
         <div className="text-6xl mb-4">✅</div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Order Confirmed!</h1>
         <div className="bg-gray-50 rounded-lg p-4 mb-4">
-          <div className="text-lg font-semibold">Order ID: #ORD12345</div>
-          <div className="text-gray-600">ETA: 25-30 minutes</div>
+          <div className="text-lg font-semibold">Order ID: #{recentOrders[0]?.order_id || 'Loading...'}</div>
+          <div className="text-gray-600">ETA: {recentOrders[0]?.estimated_delivery_time || '25-30 minutes'}</div>
         </div>
         
         <div className="flex items-center justify-center mb-6">
-          <div className={`w-3 h-3 rounded-full bg-yellow-500 mr-2`}></div>
-          <span className="text-sm font-medium">Preparing</span>
+          <div className={`w-3 h-3 rounded-full mr-2 ${
+            recentOrders[0]?.status === 'preparing' ? 'bg-yellow-500' :
+            recentOrders[0]?.status === 'ready' ? 'bg-blue-500' :
+            recentOrders[0]?.status === 'out_for_delivery' ? 'bg-orange-500' :
+            recentOrders[0]?.status === 'delivered' ? 'bg-green-500' : 'bg-gray-500'
+          }`}></div>
+          <span className="text-sm font-medium capitalize">{recentOrders[0]?.status || 'Preparing'}</span>
         </div>
 
         <div className="space-y-3">

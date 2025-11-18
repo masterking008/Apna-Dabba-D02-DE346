@@ -1,17 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { orderService } from '../../services';
+import type { Order } from '../../services';
 
 interface OrderTrackingScreenProps {
+  orderId?: string;
   onBack?: () => void;
 }
 
-const OrderTrackingScreen: React.FC<OrderTrackingScreenProps> = ({ onBack }) => {
-  const orderStatus = {
-    orderId: 'ORD12345',
-    currentStatus: 'Out for Delivery',
-    eta: '10-15 minutes',
-    deliveryPartner: 'Suresh Patel',
-    phone: '+91 9876543210'
-  };
+const OrderTrackingScreen: React.FC<OrderTrackingScreenProps> = ({ orderId, onBack }) => {
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (!orderId) return;
+      try {
+        const orders = await orderService.getOrders();
+        const foundOrder = orders.find(o => o.order_id === orderId);
+        setOrder(foundOrder || null);
+      } catch (error) {
+        console.error('Failed to fetch order:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrder();
+  }, [orderId]);
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
+
+  if (!order) {
+    return <div className="flex justify-center items-center h-64">Order not found</div>;
+  }
 
   const statusSteps = [
     { status: 'Placed', completed: true, time: '12:30 PM' },
@@ -47,9 +69,9 @@ const OrderTrackingScreen: React.FC<OrderTrackingScreenProps> = ({ onBack }) => 
       <div className="p-4 space-y-4">
         <div className="bg-white rounded-xl shadow-md p-6">
           <div className="text-center mb-6">
-            <h2 className="text-lg font-semibold">Order #{orderStatus.orderId}</h2>
-            <p className="text-2xl font-bold text-orange-600 mt-2">{orderStatus.currentStatus}</p>
-            <p className="text-gray-600">ETA: {orderStatus.eta}</p>
+            <h2 className="text-lg font-semibold">Order #{order.order_id}</h2>
+            <p className="text-2xl font-bold text-orange-600 mt-2 capitalize">{order.status}</p>
+            <p className="text-gray-600">ETA: {order.estimated_delivery_time}</p>
           </div>
 
           <div className="space-y-4">
@@ -77,8 +99,8 @@ const OrderTrackingScreen: React.FC<OrderTrackingScreenProps> = ({ onBack }) => 
                 <span className="text-2xl">🏍️</span>
               </div>
               <div>
-                <div className="font-medium">{orderStatus.deliveryPartner}</div>
-                <div className="text-sm text-gray-600">{orderStatus.phone}</div>
+                <div className="font-medium">Delivery Partner</div>
+                <div className="text-sm text-gray-600">Contact via app</div>
               </div>
             </div>
             <button className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm">

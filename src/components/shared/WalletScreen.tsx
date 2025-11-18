@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { walletService, Wallet, Transaction } from '../../services';
+import { walletService } from '../../services';
+import type { Wallet, Transaction } from '../../services';
+import Swal from 'sweetalert2';
 
 interface WalletScreenProps {
   onPayment?: () => void;
@@ -20,9 +22,11 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onPayment }) => {
           walletService.getTransactions()
         ]);
         setWallet(walletData);
-        setTransactions(transactionData);
+        setTransactions(Array.isArray(transactionData) ? transactionData : []);
       } catch (error) {
         console.error('Failed to fetch wallet data:', error);
+        setWallet(null);
+        setTransactions([]);
       } finally {
         setLoading(false);
       }
@@ -42,7 +46,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onPayment }) => {
       setTransactions(newTransactions);
     } catch (error) {
       console.error('Failed to add money:', error);
-      alert('Failed to add money. Please try again.');
+      Swal.fire('Error', 'Failed to add money. Please try again.', 'error');
     }
   };
 
@@ -86,7 +90,12 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onPayment }) => {
         <div className="bg-white rounded-xl shadow-md p-4">
           <h3 className="text-lg font-semibold mb-4">Recent Transactions</h3>
           <div className="space-y-3">
-            {transactions.map((transaction) => (
+            {transactions.length === 0 ? (
+              <div className="text-center py-4 text-gray-500">
+                No transactions yet
+              </div>
+            ) : (
+              transactions.map((transaction) => (
               <div key={transaction.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -109,7 +118,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onPayment }) => {
                   {transaction.type === 'credit' ? '+' : '-'}₹{transaction.amount}
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

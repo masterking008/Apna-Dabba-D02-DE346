@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Smartphone, CreditCard, Lock } from 'lucide-react';
 
 interface PaymentGatewayProps {
   amount: number;
@@ -37,7 +38,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({ amount, onSuccess, onCa
                   className="mr-3"
                 />
                 <div className="flex items-center">
-                  <span className="text-2xl mr-3">📱</span>
+                  <Smartphone size={24} className="text-blue-500 mr-3" />
                   <div>
                     <div className="font-medium">UPI</div>
                     <div className="text-sm text-gray-600">Pay using UPI ID</div>
@@ -55,7 +56,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({ amount, onSuccess, onCa
                   className="mr-3"
                 />
                 <div className="flex items-center">
-                  <span className="text-2xl mr-3">💳</span>
+                  <CreditCard size={24} className="text-green-500 mr-3" />
                   <div>
                     <div className="font-medium">Razorpay</div>
                     <div className="text-sm text-gray-600">Card, Net Banking, Wallets</div>
@@ -88,7 +89,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({ amount, onSuccess, onCa
 
         <div className="mt-6 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-            <span>🔒</span>
+            <Lock size={16} className="text-gray-500" />
             <span>Secured by 256-bit SSL encryption</span>
           </div>
         </div>

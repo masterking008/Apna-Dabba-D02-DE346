@@ -1,9 +1,9 @@
 import { apiClient } from './api';
 import { authService } from './authService';
-import type { StudentProfile, MessWorkerProfile, DeliveryPartnerProfile, UpdateProfileData } from './interfaces';
+import type { UserProfile, StudentProfile, MessWorkerProfile, DeliveryPartnerProfile, UpdateProfileData } from './interfaces';
 
 class ProfileService {
-  async getProfile(): Promise<any> {
+  async getProfile(): Promise<UserProfile> {
     const token = authService.getToken();
     const user = authService.getUser();
     
@@ -18,7 +18,7 @@ class ProfileService {
     return Promise.reject('Invalid user type');
   }
 
-  async updateProfile(data: UpdateProfileData): Promise<any> {
+  async updateProfile(data: UserProfile | UpdateProfileData): Promise<UserProfile> {
     const token = authService.getToken();
     const user = authService.getUser();
     

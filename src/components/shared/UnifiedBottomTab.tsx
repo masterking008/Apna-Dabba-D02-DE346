@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Home, ClipboardList, CreditCard, User, UtensilsCrossed, BarChart3, Truck, DollarSign, Map } from 'lucide-react';
 import BottomTabLayout from './BottomTabLayout';
 
 // Student components
@@ -60,24 +61,24 @@ const UnifiedBottomTab: React.FC<UnifiedBottomTabProps> = ({ userType, onMealSel
     switch (type) {
       case 'Student':
         return [
-          { id: 'home', label: 'Home', icon: '🏠' },
-          { id: 'orders', label: 'Orders', icon: '📋' },
-          { id: 'wallet', label: 'Wallet', icon: '💳' },
-          { id: 'profile', label: 'Profile', icon: '👤' }
+          { id: 'home', label: 'Home', icon: <Home size={20} /> },
+          { id: 'orders', label: 'Orders', icon: <ClipboardList size={20} /> },
+          { id: 'wallet', label: 'Wallet', icon: <CreditCard size={20} /> },
+          { id: 'profile', label: 'Profile', icon: <User size={20} /> }
         ];
       case 'Mess Worker':
         return [
-          { id: 'orders', label: 'Orders', icon: '📋' },
-          { id: 'menu', label: 'Menu', icon: '🍽️' },
-          { id: 'analytics', label: 'Analytics', icon: '📊' },
-          { id: 'profile', label: 'Profile', icon: '👤' }
+          { id: 'orders', label: 'Orders', icon: <ClipboardList size={20} /> },
+          { id: 'menu', label: 'Menu', icon: <UtensilsCrossed size={20} /> },
+          { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={20} /> },
+          { id: 'profile', label: 'Profile', icon: <User size={20} /> }
         ];
       case 'Delivery Partner':
         return [
-          { id: 'deliveries', label: 'Deliveries', icon: '🚚' },
-          { id: 'earnings', label: 'Earnings', icon: '💰' },
-          { id: 'map', label: 'Map', icon: '🗺️' },
-          { id: 'profile', label: 'Profile', icon: '👤' }
+          { id: 'deliveries', label: 'Deliveries', icon: <Truck size={20} /> },
+          { id: 'earnings', label: 'Earnings', icon: <DollarSign size={20} /> },
+          { id: 'map', label: 'Map', icon: <Map size={20} /> },
+          { id: 'profile', label: 'Profile', icon: <User size={20} /> }
         ];
     }
   }
@@ -98,10 +99,10 @@ const UnifiedBottomTab: React.FC<UnifiedBottomTabProps> = ({ userType, onMealSel
         case 'menu': return <MessWorkerMenuManagement />;
         case 'analytics': return (
           <div className="p-4">
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="text-4xl mb-4">📊</div>
-              <h3 className="text-lg font-semibold text-gray-800">Analytics</h3>
-              <p className="text-gray-600">View detailed reports and insights</p>
+            <div className="card text-center">
+              <div className="flex justify-center mb-4"><BarChart3 size={48} className="text-primary-500" /></div>
+              <h3 className="text-lg font-semibold text-heading">Analytics</h3>
+              <p className="text-subtext">View detailed reports and insights</p>
             </div>
           </div>
         );
@@ -114,19 +115,19 @@ const UnifiedBottomTab: React.FC<UnifiedBottomTabProps> = ({ userType, onMealSel
         case 'deliveries': return <DeliveryPartnerDashboard />;
         case 'earnings': return (
           <div className="p-4">
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="text-4xl mb-4">💰</div>
-              <h3 className="text-lg font-semibold text-gray-800">Earnings</h3>
-              <p className="text-gray-600">Detailed earnings and payout history</p>
+            <div className="card text-center">
+              <div className="flex justify-center mb-4"><DollarSign size={48} className="text-primary-500" /></div>
+              <h3 className="text-lg font-semibold text-heading">Earnings</h3>
+              <p className="text-subtext">Detailed earnings and payout history</p>
             </div>
           </div>
         );
         case 'map': return (
           <div className="p-4">
-            <div className="bg-white rounded-xl shadow-md p-6 text-center">
-              <div className="text-4xl mb-4">🗺️</div>
-              <h3 className="text-lg font-semibold text-gray-800">Live Map</h3>
-              <p className="text-gray-600">Real-time delivery tracking and navigation</p>
+            <div className="card text-center">
+              <div className="flex justify-center mb-4"><Map size={48} className="text-primary-500" /></div>
+              <h3 className="text-lg font-semibold text-heading">Live Map</h3>
+              <p className="text-subtext">Real-time delivery tracking and navigation</p>
             </div>
           </div>
         );

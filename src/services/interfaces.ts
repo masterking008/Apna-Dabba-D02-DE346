@@ -2,7 +2,7 @@
 export interface LoginData {
   username: string;
   password: string;
-  user_type: 'Student' | 'Mess Worker' | 'Delivery Partner';
+  user_type: 'student' | 'mess_worker' | 'delivery_partner';
 }
 
 export interface RegisterData {
@@ -71,6 +71,7 @@ export interface Order {
   id: number;
   order_id: string;
   student: any;
+  user?: User;
   meal_type: any;
   delivery_address: any;
   delivery_type: 'hub' | 'hand';
@@ -81,6 +82,7 @@ export interface Order {
   created_at: string;
   items: any[];
   extras: any[];
+  hostel?: string;
 }
 
 export interface CreateOrderData {
@@ -161,6 +163,19 @@ export interface DeliveryRequest {
 }
 
 // Profile interfaces
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number?: string;
+  user_type: string;
+  hostel?: string;
+  roll_number?: string;
+  room_number?: string;
+}
+
 export interface StudentProfile {
   roll_number: string;
   hostel: Hostel;

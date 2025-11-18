@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { orderService } from '../../services';
+import type { Order } from '../../services';
 
 interface StudentHistoryTabProps {
   onTrackOrder?: (orderId: string) => void;
@@ -6,13 +8,23 @@ interface StudentHistoryTabProps {
 
 const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({ onTrackOrder }) => {
   const [filter, setFilter] = useState('all');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const orders = [
-    { id: 'ORD001', meal: 'Lunch', items: ['Dal Rice', 'Roti'], date: '2024-01-15', status: 'delivered', amount: 85 },
-    { id: 'ORD002', meal: 'Breakfast', items: ['Poha', 'Tea'], date: '2024-01-14', status: 'delivered', amount: 45 },
-    { id: 'ORD003', meal: 'Dinner', items: ['Chapati', 'Dal'], date: '2024-01-13', status: 'cancelled', amount: 70 },
-    { id: 'ORD004', meal: 'Lunch', items: ['Biryani', 'Raita'], date: '2024-01-12', status: 'delivered', amount: 95 }
-  ];
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const data = await orderService.getOrders();
+        setOrders(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch orders:', error);
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -24,6 +36,10 @@ const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({ onTrackOrder }) =
   };
 
   const filteredOrders = filter === 'all' ? orders : orders.filter(order => order.status === filter);
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
 
   return (
     <div className="bg-gray-50">
@@ -51,23 +67,23 @@ const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({ onTrackOrder }) =
             <div key={order.id} className="bg-white rounded-xl shadow-md p-4">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="font-semibold text-lg">Order #{order.id}</h3>
-                  <p className="text-gray-600 text-sm">{order.meal} • {order.date}</p>
+                  <h3 className="font-semibold text-lg">Order #{order.order_id}</h3>
+                  <p className="text-gray-600 text-sm">{order.meal_type?.name || 'N/A'} • {new Date(order.created_at).toLocaleDateString()}</p>
                   <div className="text-sm text-gray-500 mt-1">
-                    {order.items.join(', ')}
+                    {order.items?.map(item => item.name).join(', ') || 'No items'}
                   </div>
                 </div>
                 <div className="text-right">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
                     {order.status.toUpperCase()}
                   </span>
-                  <div className="text-lg font-bold text-gray-800 mt-1">₹{order.amount}</div>
+                  <div className="text-lg font-bold text-gray-800 mt-1">₹{order.total_amount}</div>
                 </div>
               </div>
               
               <div className="flex gap-2">
                 <button 
-                  onClick={() => onTrackOrder?.(order.id)}
+                  onClick={() => onTrackOrder?.(order.order_id)}
                   className="flex-1 bg-indigo-500 text-white py-2 rounded-lg text-sm font-medium"
                 >
                   Reorder
