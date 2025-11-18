@@ -49,6 +49,7 @@ export interface MenuItem {
   meal_type: MealType;
   hostel: any;
   is_available: boolean;
+  image?: string;
 }
 
 export interface ExtraItem {

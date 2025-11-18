@@ -70,7 +70,7 @@ const StudentHistoryTab: React.FC<StudentHistoryTabProps> = ({ onTrackOrder }) =
                   <h3 className="font-semibold text-lg">Order #{order.order_id}</h3>
                   <p className="text-gray-600 text-sm">{order.meal_type?.name || 'N/A'} • {new Date(order.created_at).toLocaleDateString()}</p>
                   <div className="text-sm text-gray-500 mt-1">
-                    {order.items?.map(item => item.name).join(', ') || 'No items'}
+                    {order.items?.map(item => item.menu_item?.name || 'Item').join(', ') || 'No items'}
                   </div>
                 </div>
                 <div className="text-right">

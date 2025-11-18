@@ -88,10 +88,19 @@ const MealCustomization: React.FC<MealCustomizationProps> = ({ mealName }) => {
           {menuItems.map((item) => {
             const isSelected = selectedItems.some(s => s.id === item.id);
             return (
-              <div key={item.id} className="flex items-center justify-between py-2">
-                <div className="flex items-center gap-2">
-                  <span>{item.name}</span>
-                  <button onClick={() => addToFavorites(item.id)} className="text-sm">🤍</button>
+              <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  {item.image && (
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                  )}
+                  <div>
+                    <span className="font-medium">{item.name}</span>
+                    <button onClick={() => addToFavorites(item.id)} className="ml-2 text-sm">🤍</button>
+                  </div>
                 </div>
                 <button
                   onClick={() => toggleItem(item.id)}

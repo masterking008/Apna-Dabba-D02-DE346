@@ -76,9 +76,18 @@ const FavoritesScreen: React.FC = () => {
               <div className="space-y-3">
                 {favorites.map((favorite) => (
                   <div key={favorite.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <h4 className="font-medium">{favorite.menu_item.name}</h4>
-                      <p className="text-sm text-gray-600">{favorite.menu_item.meal_type.name} • {favorite.menu_item.hostel.name}</p>
+                    <div className="flex items-center gap-3">
+                      {favorite.menu_item.image && (
+                        <img 
+                          src={favorite.menu_item.image} 
+                          alt={favorite.menu_item.name}
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
+                      )}
+                      <div>
+                        <h4 className="font-medium">{favorite.menu_item.name}</h4>
+                        <p className="text-sm text-gray-600">{favorite.menu_item.meal_type.name} • {favorite.menu_item.hostel.name}</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className={`text-xs px-2 py-1 rounded-full ${
