@@ -15,7 +15,7 @@ class WalletService {
 
   async getTransactions(): Promise<Transaction[]> {
     const token = authService.getToken();
-    return apiClient.get('/transactions/', token);
+    return apiClient.get('/wallet/transactions/', token);
   }
 }
 

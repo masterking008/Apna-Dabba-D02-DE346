@@ -11,6 +11,7 @@ export { profileService } from './profileService';
 export { analyticsService } from './analyticsService';
 export { searchService } from './searchService';
 export { feedbackService } from './feedbackService';
+export { adminService } from './adminService';
 
 // Export all types from centralized interfaces
 export * from './interfaces';

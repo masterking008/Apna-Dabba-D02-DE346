@@ -7,13 +7,29 @@ class AuthService {
   private user: User | null = null;
 
   constructor() {
-    this.token = localStorage.getItem('token');
+    this.token = localStorage.getItem('token') || 'mock-token-123';
     const userData = localStorage.getItem('user');
     this.user = userData ? JSON.parse(userData) : null;
+    
+    // Auto-login with mock user for development
+    if (!this.user) {
+      this.user = {
+        id: 1,
+        username: 'student1',
+        email: 'student1@example.com',
+        first_name: 'Rahul',
+        last_name: 'Sharma',
+        user_type: 'student',
+        phone: '+91 9876543210',
+        is_verified: true
+      };
+      localStorage.setItem('user', JSON.stringify(this.user));
+      localStorage.setItem('token', this.token);
+    }
   }
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await apiClient.post('/login/', data);
+    const response = await apiClient.post('/auth/login/', data);
     if (response.token) {
       this.token = response.token;
       this.user = response.user;
@@ -24,7 +40,7 @@ class AuthService {
   }
 
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await apiClient.post('/register/', data);
+    const response = await apiClient.post('/auth/register/', data);
     if (response.token) {
       this.token = response.token;
       this.user = response.user;

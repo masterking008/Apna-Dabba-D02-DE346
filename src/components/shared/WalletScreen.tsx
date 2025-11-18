@@ -65,12 +65,12 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onPayment }) => {
       </div>
 
       <div className="p-4 space-y-4">
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 text-white">
+        <div className="bg-gradient-to-r from-green-500 to-teal-600 rounded-xl p-6 text-white">
           <h2 className="text-lg font-semibold mb-2">Current Balance</h2>
           <div className="text-3xl font-bold mb-4">₹{wallet.balance}</div>
           <button 
             onClick={() => setShowAddMoney(true)}
-            className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-medium"
+            className="bg-white text-green-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors"
           >
             Add Money
           </button>
@@ -99,23 +99,23 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onPayment }) => {
               <div key={transaction.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    transaction.type === 'credit' ? 'bg-green-100' : 'bg-red-100'
+                    transaction.transaction_type === 'credit' ? 'bg-green-100' : 'bg-red-100'
                   }`}>
                     <span className={`text-sm ${
-                      transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                      transaction.transaction_type === 'credit' ? 'text-green-600' : 'text-red-600'
                     }`}>
-                      {transaction.type === 'credit' ? '+' : '-'}
+                      {transaction.transaction_type === 'credit' ? '+' : '-'}
                     </span>
                   </div>
                   <div>
                     <div className="font-medium text-sm">{transaction.description}</div>
-                    <div className="text-xs text-gray-500">{transaction.date}</div>
+                    <div className="text-xs text-gray-500">{new Date(transaction.created_at).toLocaleDateString()}</div>
                   </div>
                 </div>
                 <div className={`font-semibold ${
-                  transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                  transaction.transaction_type === 'credit' ? 'text-green-600' : 'text-red-600'
                 }`}>
-                  {transaction.type === 'credit' ? '+' : '-'}₹{transaction.amount}
+                  {transaction.transaction_type === 'credit' ? '+' : '-'}₹{transaction.amount}
                 </div>
               </div>
               ))

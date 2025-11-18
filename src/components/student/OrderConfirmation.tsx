@@ -60,13 +60,13 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ onTrackOrder, onR
 
         <div className="space-y-3">
           <button
-            onClick={onTrackOrder}
+            onClick={() => navigate('/dashboard')}
             className="w-full bg-indigo-500 text-white py-3 rounded-lg font-semibold hover:bg-indigo-600 transition-colors"
           >
             Track Order
           </button>
           <button
-            onClick={onHome}
+            onClick={() => navigate('/dashboard')}
             className="w-full border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
           >
             Back to Home
@@ -88,7 +88,7 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ onTrackOrder, onR
                   <div className="text-sm text-gray-500">₹{order.total_amount}</div>
                 </div>
                 <button
-                  onClick={() => onReorder?.(order.order_id)}
+                  onClick={() => navigate('/meal-customize')}
                   className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors"
                 >
                   Reorder

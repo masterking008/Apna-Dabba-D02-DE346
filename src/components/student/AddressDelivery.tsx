@@ -66,7 +66,7 @@ const AddressDelivery: React.FC<AddressDeliveryProps> = ({ onConfirm, onBack }) 
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="bg-white rounded-xl shadow-md p-6">
         <div className="flex items-center mb-6">
-          <button onClick={onBack} className="text-indigo-500 mr-4">← Back</button>
+          <button onClick={() => navigate('/meal-customize')} className="text-indigo-500 mr-4">← Back</button>
           <h1 className="text-xl font-bold">Address & Delivery</h1>
         </div>
 
@@ -138,7 +138,7 @@ const AddressDelivery: React.FC<AddressDeliveryProps> = ({ onConfirm, onBack }) 
         </div>
 
         <button
-          onClick={onConfirm}
+          onClick={() => navigate('/order-confirm')}
           className="w-full bg-indigo-500 text-white py-3 rounded-lg font-semibold hover:bg-indigo-600 transition-colors"
         >
           Confirm Order
